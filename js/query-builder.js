@@ -10,18 +10,36 @@
  * 這些 OR 群組沒辦法直接安全地用 & 串在一起（會產生錯誤結果）。
  * 解法：用笛卡兒積（cartesian product）把每個 OR 群組展開，
  * 拆成多條「內部完全沒有歧義」的查詢字串，讓使用者依序使用。
+ *
+ * 多語系（Game Language）：Pokémon GO 會依照遊戲畫面顯示語言翻譯部分關鍵字（例如中文版
+ * 「0防禦」而非「0defense」）。buildQueries 的第二個參數 gameLang（"zh" 或 "en"）決定要
+ * 輸出哪個版本，實際取用哪個字串由 termFor() / prefixFor() 決定：group/option 有提供對應
+ * 語言欄位就用它，沒有就一律 fallback 回英文（value / prefix）。
+ *
+ * 注意：這裡不直接產生「衝突警告」的最終文字（那是 Page Language 的顯示文字），
+ * 而是回傳結構化的 warningInfo，讓呼叫端（app.js）依照目前的 Page Language 自行組字。
  */
 
 const MAX_GENERATED_QUERIES = 50;
 
+function termFor(opt, gameLang) {
+  if (gameLang === "zh" && opt.zh) return opt.zh;
+  return opt.value;
+}
+
+function prefixFor(group, gameLang) {
+  if (gameLang === "zh" && group.zhPrefix) return group.zhPrefix;
+  return group.prefix;
+}
+
 /**
  * @param {Object} selections - 依 FILTER_GROUPS 各 group.id 對應的目前選擇狀態
- * @returns {{queries: string[], warnings: string[]}}
+ * @param {string} gameLang - "zh"（繁體中文遊戲語言）或 "en"（英文），預設 "zh"
+ * @returns {{queries: string[], warningInfo: null | {groupIds: string[], total: number, capped: boolean, cap: number}}}
  */
-function buildQueries(selections) {
+function buildQueries(selections, gameLang = "zh") {
   const andTerms = [];
   const orGroups = []; // 每個元素是「同一分類底下彼此互斥的候選字串」陣列
-  const warnings = [];
 
   for (const group of FILTER_GROUPS) {
     const state = selections[group.id];
@@ -39,34 +57,34 @@ function buildQueries(selections) {
         if (raw) andTerms.push(raw);
       }
     } else if (group.type === "range") {
-      const term = buildRangeTerm(group.prefix, state.min, state.max);
+      const term = buildRangeTerm(prefixFor(group, gameLang), state.min, state.max);
       if (term) andTerms.push(term);
     } else if (group.type === "toggle") {
       for (const opt of group.options) {
         const s = state[opt.value]; // "include" | "exclude" | undefined
-        if (s === "include") andTerms.push(opt.value);
-        else if (s === "exclude") andTerms.push(`!${opt.value}`);
+        if (s === "include") andTerms.push(termFor(opt, gameLang));
+        else if (s === "exclude") andTerms.push(`!${termFor(opt, gameLang)}`);
       }
     } else if (group.type === "multi-or") {
       const selected = group.options
         .filter((opt) => state[opt.value])
-        .map((opt) => opt.value);
+        .map((opt) => termFor(opt, gameLang));
       if (selected.length === 1) {
         andTerms.push(selected[0]);
       } else if (selected.length > 1) {
-        orGroups.push({ groupTitle: group.title, terms: selected });
+        orGroups.push({ groupId: group.id, terms: selected });
       }
     }
   }
 
   if (orGroups.length === 0) {
     const query = andTerms.join("&");
-    return { queries: query ? [query] : [], warnings };
+    return { queries: query ? [query] : [], warningInfo: null };
   }
 
   if (orGroups.length === 1) {
     const query = [orGroups[0].terms.join(","), ...andTerms].join("&");
-    return { queries: [query], warnings };
+    return { queries: [query], warningInfo: null };
   }
 
   // 2 個以上的 OR 群組：用笛卡兒積展開成多條安全的查詢字串。
@@ -82,22 +100,20 @@ function buildQueries(selections) {
   }
 
   const totalBeforeCap = combos.length;
-  if (combos.length > MAX_GENERATED_QUERIES) {
+  const capped = combos.length > MAX_GENERATED_QUERIES;
+  if (capped) {
     combos = combos.slice(0, MAX_GENERATED_QUERIES);
   }
 
-  const groupNames = orGroups.map((g) => g.groupTitle).join("、");
-  warnings.push(
-    `偵測到你同時在「${groupNames}」這 ${orGroups.length} 個分類做了複選。` +
-      `因為 Pokémon GO 搜尋語法不支援括號，且 OR 的優先權高於 AND，直接把它們用 & 串在一起會產生錯誤的搜尋結果。` +
-      `已自動拆成 ${totalBeforeCap} 條各自獨立、邏輯正確的查詢字串，請依序使用。` +
-      (totalBeforeCap > MAX_GENERATED_QUERIES
-        ? `（組合數過多，僅顯示前 ${MAX_GENERATED_QUERIES} 條，建議減少勾選數量。）`
-        : "")
-  );
+  const warningInfo = {
+    groupIds: orGroups.map((g) => g.groupId),
+    total: totalBeforeCap,
+    capped,
+    cap: MAX_GENERATED_QUERIES,
+  };
 
   const queries = combos.map((combo) => [...combo, ...andTerms].join("&"));
-  return { queries, warnings };
+  return { queries, warningInfo };
 }
 
 function buildRangeTerm(prefix, min, max) {

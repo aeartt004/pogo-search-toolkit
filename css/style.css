@@ -78,6 +78,34 @@ body {
   margin: 4px 0 8px;
 }
 
+.lang-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  background: #10161d;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+}
+
+.lang-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.lang-help {
+  margin-top: 0;
+}
+
 .control-text input[type="text"],
 .control-range input[type="number"] {
   background: #10161d;
