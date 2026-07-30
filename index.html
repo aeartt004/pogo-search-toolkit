@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pokémon GO 搜尋條件產生器</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Pokémon GO 搜尋條件產生器</h1>
+    <p class="subtitle">勾選你要的條件，自動組出遊戲搜尋欄可以用的語法字串</p>
+  </header>
+
+  <main class="app-main">
+    <section class="panel results-panel">
+      <h2>產生結果</h2>
+      <div id="warnings"></div>
+      <div id="results"></div>
+      <div class="save-row">
+        <input type="text" id="preset-name-input" placeholder="組合名稱，例如：低星淘汰名單" />
+        <button type="button" id="save-preset-btn">💾 儲存這組條件</button>
+        <button type="button" id="reset-btn">重設</button>
+      </div>
+    </section>
+
+    <section class="panel presets-panel">
+      <h2>已儲存的組合</h2>
+      <ul id="preset-list"></ul>
+      <div class="backup-row">
+        <button type="button" id="export-btn">匯出備份 (JSON)</button>
+        <label class="import-label">
+          匯入備份
+          <input type="file" id="import-input" accept="application/json" hidden />
+        </label>
+      </div>
+      <p class="help-text">
+        目前僅儲存在「這個瀏覽器」裡（localStorage）。換裝置或換瀏覽器不會自動同步，
+        可以用上面的匯出/匯入功能手動備份、搬到別的裝置。
+      </p>
+    </section>
+
+    <form id="filter-form" class="panel form-panel"></form>
+  </main>
+
+  <footer class="app-footer">
+    <p>語法規則整理自 Pokémon GO Fandom Wiki 與 Niantic 官方說明，遊戲更新後語法可能變動，若某條件用了無效果請以遊戲內實際結果為準。</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/query-builder.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

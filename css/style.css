@@ -1,0 +1,231 @@
+:root {
+  --bg: #0f1720;
+  --panel-bg: #1b2530;
+  --text: #e8edf2;
+  --muted: #9aa7b4;
+  --accent: #ffcb05; /* Pokémon yellow */
+  --accent-2: #2a75bb; /* Pokémon blue */
+  --danger: #e5484d;
+  --success: #2f9e44;
+  --border: #2e3947;
+  font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.app-header {
+  padding: 20px 16px 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-header h1 {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+  color: var(--accent);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.app-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: var(--accent-2);
+}
+
+.filter-group {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.filter-group:last-child { border-bottom: none; }
+
+.filter-group h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.help-text {
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin: 4px 0 8px;
+}
+
+.control-text input[type="text"],
+.control-range input[type="number"] {
+  background: #10161d;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.95rem;
+}
+
+.control-text input[type="text"] {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.control-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.control-range input[type="number"] { width: 120px; }
+.range-sep { color: var(--muted); }
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  margin: 4px 12px 4px 0;
+}
+
+.control-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+
+.control-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  background: #10161d;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.chip-include { background: rgba(47, 158, 68, 0.25); border-color: var(--success); }
+.chip-exclude { background: rgba(229, 72, 77, 0.25); border-color: var(--danger); }
+
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #10161d;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+}
+
+.result-row code {
+  flex: 1;
+  white-space: nowrap;
+  color: var(--accent);
+  font-family: "Consolas", "SFMono-Regular", monospace;
+}
+
+.result-index {
+  color: var(--muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.copy-btn, .save-row button, .backup-row button, .import-label, #reset-btn {
+  background: var(--accent-2);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#reset-btn { background: #3a4753; }
+
+.warning-box {
+  background: rgba(255, 203, 5, 0.12);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+.save-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.save-row input[type="text"] {
+  flex: 1;
+  min-width: 160px;
+  background: #10161d;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+#preset-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+}
+
+.preset-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.preset-item span { flex: 1; }
+.preset-item button.danger { background: var(--danger); }
+
+.backup-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.app-footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.75rem;
+  padding: 20px 16px 30px;
+}
+
+@media (min-width: 720px) {
+  .control-checkboxes { gap: 6px 20px; }
+}
