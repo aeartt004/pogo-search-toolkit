@@ -1,7 +1,7 @@
 /**
  * 介面顯示語言字典（Page Language）。
  *
- * 這裡的語言跟 query-builder.js 的「Game Language（遊戲搜尋語法語言）」是兩件独立的事：
+ * 這裡的語言跟 query-builder.js 的「Game Language（遊戲搜尋語法語言）」是兩件獨立的事：
  *  - Page Language 只影響「這個網頁本身」顯示的文字（標題、說明、按鈕…）。
  *  - Game Language 影響「產生出來的搜尋字串」要用哪種語言的關鍵字（例如 0防禦 / 0defense）。
  * 兩者可以任意組合，例如介面用英文、但搜尋語法輸出中文，反之亦然。
@@ -69,13 +69,13 @@ const UI_TEXT = {
       conflict: (groupNames, groupCount, total, capped, cap) =>
         `偵測到你同時在「${groupNames}」這 ${groupCount} 個分類做了複選。` +
         `因為 Pokémon GO 搜尋語法不支援括號，且 OR 的優先權高於 AND，直接把它們用 & 串在一起會產生錯誤的搜尋結果。` +
-        `已自動拆成 ${total} 條各自独立、邏輯正確的查詢字串，請依序使用。` +
+        `已自動拆成 ${total} 條各自獨立、邏輯正確的查詢字串，請依序使用。` +
         (capped ? `（組合數過多，僅顯示前 ${cap} 條，建議減少勾選數量。）` : ""),
     },
     ivTierLabels: IV_TIER_LABELS.zh,
     groups: {
       species: {
-        title: "物種／昱稱搜尋",
+        title: "物種／暱稱搜尋",
         placeholder: "例如：pikachu（僅比對名稱開頭，不支援中間比對）",
         help: "只比對名稱開頭（前綴），例如打 nitar 找不到 Tyranitar。若要找一整個進化家族，勾選下方選項會自動加上「+」前綴。",
         familyLabel: "含整個進化家族（自動加上 + 前綴）",
@@ -87,7 +87,7 @@ const UI_TEXT = {
       },
       star: {
         title: "IV 星等",
-        help: "星等是官方鑑定的整數區間，不是連續百分比，中間會有天然的百分比空隱（因為個體值只能是整數）。",
+        help: "星等是官方鑑定的整數區間，不是連續百分比，中間會有天然的百分比空隙（因為個體值只能是整數）。",
         options: {
           "0*": "0★（IV 0–49%）",
           "1*": "1★（IV 51–64%）",
@@ -124,14 +124,14 @@ const UI_TEXT = {
           electric: "電（electric）", ice: "冰（ice）", fighting: "格鬥（fighting）", poison: "毒（poison）",
           ground: "地面（ground）", flying: "飛行（flying）", psychic: "超能力（psychic）", bug: "蟲（bug）",
           rock: "岩石（rock）", ghost: "幽靈（ghost）", dragon: "龍（dragon）", dark: "惡（dark）",
-          steel: "鉜（steel）", fairy: "妖精（fairy）",
+          steel: "鋼（steel）", fairy: "妖精（fairy）",
         },
       },
       region: {
         title: "地區（可複選＝OR）",
         options: {
           kanto: "關都 Kanto（第1代）", johto: "城都 Johto（第2代）", hoenn: "豐緣 Hoenn（第3代）",
-          sinnoh: "神奧 Sinnoh（第4代）", unova: "合眸 Unova（第5代）", kalos: "卡洛斯 Kalos（第6代）",
+          sinnoh: "神奧 Sinnoh（第4代）", unova: "合眾 Unova（第5代）", kalos: "卡洛斯 Kalos（第6代）",
           alola: "阿羅拉 Alola（第7代）", galar: "伽勒爾 Galar（第8代）", hisui: "洗翠 Hisui",
           paldea: "帕底亞 Paldea（第9代）",
         },

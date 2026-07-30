@@ -5,9 +5,9 @@
  * group.type 說明：
  *  - "multi-or"   : 複選勾選框；使用者若選 2 個以上，這些值彼此是 OR（用逗號),
  *                   會被 query-builder 標記為「OR 群組」，可能觸發笛卡兒積拆解。
- *  - "toggle"     : 三態切換鈕（不限 / 需要 / 排除），每個選項互相独立，用 & 疊加。
+ *  - "toggle"     : 三態切換鈕（不限 / 需要 / 排除），每個選項互相獨立，用 & 疊加。
  *  - "range"      : 最小值/最大值數字輸入，組成 `prefix#-#` 這類語法。
- *  - "text"       : 自由輸入文字（物種名稱、昱稱、自訂詞等）。
+ *  - "text"       : 自由輸入文字（物種名稱、暱稱、自訂詞等）。
  *
  * 多語系搜尋關鍵字（Game Language）：
  * Pokémon GO 會依照「遊戲畫面顯示語言」翻譯部分搜尋關鍵字（例如中文版要打「0防禦」
@@ -25,7 +25,7 @@ const FILTER_GROUPS = [
   {
     id: "species",
     type: "text",
-    familyOption: true, // 是否顯示「含整個進化家族 (+) 」勾選框
+    familyOption: true, // 是否顯示「含整個進化家族 (+)」勾選框
   },
   {
     id: "dexnum",
@@ -93,7 +93,7 @@ const FILTER_GROUPS = [
   {
     id: "distance",
     type: "range",
-    prefix: "distance ", // 官方文件範例含空格："distance 1000"（中英文目有空格，跟 cp/hp/age 不同）
+    prefix: "distance ", // 官方文件範例含空格："distance 1000"（中英文皆有空格，跟 cp/hp/age 不同）
     zhPrefix: "距離 ", // 官方文件範例："距離 1000"
     min: 0,
     max: 20000,
@@ -129,18 +129,18 @@ const FILTER_GROUPS = [
   {
     id: "special",
     type: "toggle",
-    // zh 欄位皮已對照官方繁中文件逐一確認；fusion/favorite/hypertraining/background/
-    // locationbackground/altcolor 為官方文件有但工具原本沒有收錄的全新分類。
+    // zh 欄位皆已對照官方繁中文件逐一確認；fusion/favorite/hypertraining/background/
+    // locationbackground/altcolor 為官方文件有但工具原本沒收錄的全新分類。
     // altcolor（異色）目前只在繁中文件找到，英文版文件沒有對應段落，關鍵字暫時沿用中文拼音
     // 佔位，若你的遊戲是英文介面，這個關鍵字可能無效，請自行實測。
     options: [
       { value: "shiny", zh: "亮晶晶" }, // 修正：不是「閃光」
       { value: "legendary", zh: "傳說" },
-      { value: "mythical", zh: "幻" }, // 修正：不是「夢夢∕幻之」，官方就是單字「幻」
+      { value: "mythical", zh: "幻" }, // 修正：不是「夢幻／幻之」，官方就是單字「幻」
       { value: "ultrabeast", zh: "究極異獸" },
       { value: "shadow", zh: "暗影" },
       { value: "purified", zh: "淨化" },
-      { value: "lucky" }, // 官方繁中文件目前沒有列出對應中文關鍵字，暫時中英文皮用 lucky
+      { value: "lucky" }, // 官方繁中文件目前沒有列出對應中文關鍵字，暫時中英文皆用 lucky
       { value: "costume", zh: "特殊" }, // 修正：官方語法是「特殊」（節慶造型只是我們對它的說明文字）
       { value: "defender", zh: "防禦者" },
       { value: "favorite", zh: "我的最愛" }, // 新增：官方文件「我的最愛」
@@ -148,17 +148,17 @@ const FILTER_GROUPS = [
       { value: "hypertraining", zh: "極限特訓" }, // 新增：正在進行極限特訓
       { value: "background", zh: "背卡" }, // 新增：擁有背卡
       { value: "locationbackground", zh: "紀念背卡" }, // 新增：擁有標記捕捉地點的紀念背卡
-      { value: "altcolor", zh: "異色" }, // 新增：異色寲可夢（英文關鍵字未經官方文件證實）
+      { value: "altcolor", zh: "異色" }, // 新增：異色寶可夢（英文關鍵字未經官方文件證實）
     ],
   },
   {
     id: "source",
     type: "toggle",
     // raid/research/rocket/gbl/snapshot 這幾項目前找不到官方文件依據（只在社群 Wiki 出現過），
-    // 中文關鍵字未知，暫時維持中英文皮輸出同一個字串，請自行實測是否還有效。
+    // 中文關鍵字未知，暫時維持中英文皆輸出同一個字串，請自行實測是否還有效。
     options: [
       { value: "hatched", zh: "孵化" },
-      { value: "eggsonly", zh: "只限蛋" }, // 新增：僅限蛋出寲可夢（例如波克比），跟「孵化」不同
+      { value: "eggsonly", zh: "只限蛋" }, // 新增：僅限蛋出寶可夢（例如波克比），跟「孵化」不同
       { value: "raid" },
       { value: "research" },
       { value: "rocket" },
@@ -169,7 +169,7 @@ const FILTER_GROUPS = [
   },
   {
     // 官方文件（中英文版）都沒有提到性別搜尋語法，這組關鍵字目前只有社群 Wiki 依據，
-    // 未經官方文件或本次比對驗證，中文關鍵字未知，暫時中英文皮用同一字串。
+    // 未經官方文件或本次比對驗證，中文關鍵字未知，暫時中英文皆用同一字串。
     id: "gender",
     type: "toggle",
     options: ["male", "female", "genderunknown"].map((v) => ({ value: v })),

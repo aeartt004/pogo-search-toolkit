@@ -1,8 +1,8 @@
 /**
- * UI 渲染與互動：把 data.js 的 FILTER_GROUPS 畫成表單、收集使用者輸入，
+ * UI 渲染與互動：把 data.js 的 FILTER_GROUPS 畫成表單、收集使用者輸入、
  * 呼叫 query-builder 產生搜尋字串，並串接 storage.js 做常用組合的儲存/載入。
  *
- * 兩種独立的語言設定：
+ * 兩種獨立的語言設定：
  *  - pageLang（Page Language）：這個網頁本身顯示的文字，來自 js/i18n.js 的 UI_TEXT。
  *  - gameLang（Game Language）：產生出來的搜尋字串要用哪種語言的關鍵字（見 query-builder.js）。
  * 兩者互不影響，各自存在 localStorage，重新整理後會記住上次的選擇。
@@ -436,7 +436,7 @@ function applyStaticText() {
   document.getElementById("footer-text").textContent = UI.footer;
 }
 
-// ---------- 語言切換（Page Language / Game Language 各自独立） ----------
+// ---------- 語言切換（Page Language / Game Language 各自獨立） ----------
 
 function setupLangSwitchers() {
   const pageZh = document.getElementById("page-lang-zh");
