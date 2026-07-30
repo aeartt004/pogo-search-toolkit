@@ -1,244 +1,206 @@
 /**
- * Pokémon GO 搜尋欄篩選定義資料。
- * 每一種篩選分類（group）描述了在 UI 上要怎麼呈現，以及要怎麼組成搜尋語法字串。
+ * Pokémon GO 搜尋欄篩選定義資料 — 只放「結構」與「遊戲搜尋語法」，不放任何顯示文字。
+ * 顯示文字（標題、說明、選項標籤、按鈕文字等）統一放在 js/i18n.js，依 Page Language 切換。
  *
  * group.type 說明：
  *  - "multi-or"   : 複選勾選框；使用者若選 2 個以上，這些值彼此是 OR（用逗號),
  *                   會被 query-builder 標記為「OR 群組」，可能觸發笛卡兒積拆解。
- *  - "toggle"     : 三態切換鈕（不限 / 需要 / 排除），每個選項互相獨立，用 & 疊加。
+ *  - "toggle"     : 三態切換鈕（不限 / 需要 / 排除），每個選項互相独立，用 & 疊加。
  *  - "range"      : 最小值/最大值數字輸入，組成 `prefix#-#` 這類語法。
- *  - "text"       : 自由輸入文字（物種名稱、暱稱、自訂詞等）。
+ *  - "text"       : 自由輸入文字（物種名稱、昱稱、自訂詞等）。
+ *
+ * 多語系搜尋關鍵字（Game Language）：
+ * Pokémon GO 會依照「遊戲畫面顯示語言」翻譯部分搜尋關鍵字（例如中文版要打「0防禦」
+ * 而不是「0defense」）。因此 toggle / multi-or 的每個 option 可以額外帶一個 `zh` 欄位，
+ * 代表繁體中文版本應該輸出的關鍵字；沒有 `zh` 欄位的，代表尚未確認中文版是否有不同關鍵字，
+ * 暫時中英文都輸出同一個字串（例如 cp/hp/age 等縮寫、地區專有名詞等，通常不會被翻譯）。
+ * range 類型的 group 若中文有不同前綴，可以加上 `zhPrefix` 欄位。
+ * 實際輸出哪一種由 query-builder.js 的 buildQueries(selections, gameLang) 決定。
+ *
+ * option 的顯示文字（label）一律用 group.id（+ option.value 當 key）去 i18n.js 的
+ * UI_TEXT[pageLang].groups[group.id].options[option.value] 查詢，這裡不重複放。
  */
 
 const FILTER_GROUPS = [
   {
     id: "species",
-    title: "物種／暱稱搜尋",
     type: "text",
-    placeholder: "例如：pikachu（僅比對名稱開頭，不支援中間比對）",
-    familyOption: true, // 是否顯示「含整個進化家族 (+)」勾選框
-    help: "只比對名稱開頭（前綴），例如打 nitar 找不到 Tyranitar。若要找一整個進化家族，勾選下方選項會自動加上「+」前綴。",
+    familyOption: true, // 是否顯示「含整個進化家族 (+) 」勾選框
   },
   {
     id: "dexnum",
-    title: "圖鑑編號範圍",
     type: "range",
     prefix: "",
     min: 1,
     max: 1025,
-    placeholder: ["起始編號", "結束編號"],
-    help: "直接輸入數字，不用加 # 字號。例如 1-151 代表第一世代全部寶可夢。",
   },
   {
     id: "star",
-    title: "IV 星等",
     type: "multi-or",
     options: [
-      { value: "0*", label: "0★（IV 0–49%）" },
-      { value: "1*", label: "1★（IV 51–64%）" },
-      { value: "2*", label: "2★（IV 67–80%）" },
-      { value: "3*", label: "3★（IV 82–98%）" },
-      { value: "4*", label: "4★／完美（IV 100%）" },
+      { value: "0*" },
+      { value: "1*" },
+      { value: "2*" },
+      { value: "3*" },
+      { value: "4*" },
     ],
-    help: "星等是官方鑑定的整數區間，不是連續百分比，中間會有天然的百分比空隙（因為個體值只能是整數）。",
   },
   {
     id: "atk",
-    title: "個別數值 - 攻擊",
     type: "multi-or",
-    keywordSuffix: "attack",
-    options: tierOptions("attack"),
+    options: tierOptions("attack", "攻擊"),
   },
   {
     id: "def",
-    title: "個別數值 - 防禦",
     type: "multi-or",
-    keywordSuffix: "defense",
-    options: tierOptions("defense"),
+    options: tierOptions("defense", "防禦"), // 已由使用者實測確認：中文版要用「0防禦」而非「0defense」
   },
   {
     id: "hpiv",
-    title: "個別數值 - 體力（HP IV）",
     type: "multi-or",
-    keywordSuffix: "hp",
-    options: tierOptions("hp"),
+    options: tierOptions("hp", "hp"), // hp 為縮寫，中文版目前仍可用 hp（使用者實測確認 0hp 可搜尋到）
   },
   {
     id: "cp",
-    title: "CP 範圍",
     type: "range",
     prefix: "cp",
     min: 10,
     max: 9999,
-    placeholder: ["最小 CP", "最大 CP"],
   },
   {
     id: "hp",
-    title: "HP 範圍",
     type: "range",
     prefix: "hp",
     min: 1,
     max: 999,
-    placeholder: ["最小 HP", "最大 HP"],
   },
   {
     id: "age",
-    title: "抓到天數（age）",
     type: "range",
     prefix: "age",
+    zhPrefix: "日數", // 官方繁中文件確認：中文版關鍵字是「日數」，不是 age 的音譯或 day
     min: 0,
     max: 3650,
-    placeholder: ["最少幾天前", "最多幾天前"],
-    help: "age0＝過去 24 小時內抓到（滾動窗口，不是「今天」這種日曆天）。想找「10 天內」請填 0～10。",
   },
   {
     id: "year",
-    title: "抓到年份",
     type: "range",
     prefix: "year",
+    zhPrefix: "年", // 官方文件範例：年2016
     min: 2016,
     max: 2100,
-    placeholder: ["起始年份", "結束年份"],
   },
   {
     id: "distance",
-    title: "捕捉地點距離（公里）",
     type: "range",
-    prefix: "distance",
+    prefix: "distance ", // 官方文件範例含空格："distance 1000"（中英文目有空格，跟 cp/hp/age 不同）
+    zhPrefix: "距離 ", // 官方文件範例："距離 1000"
     min: 0,
     max: 20000,
-    placeholder: ["最短距離", "最長距離"],
-    help: "以目前你所在位置為基準，計算捕捉/孵化地點的距離。",
+  },
+  {
+    id: "megalevel",
+    type: "range",
+    prefix: "mega", // 官方文件：mega1-3，mega1=基礎級，mega2-3=高階~頂尖級
+    zhPrefix: "超級", // 官方繁中文件：超級1-3
+    min: 1,
+    max: 3,
   },
   {
     id: "type",
-    title: "屬性（可複選＝OR）",
     type: "multi-or",
     options: [
-      "normal","fire","water","grass","electric","ice","fighting","poison",
-      "ground","flying","psychic","bug","rock","ghost","dragon","dark","steel","fairy",
-    ].map((t) => ({ value: t, label: typeLabel(t) })),
+      "normal", "fire", "water", "grass", "electric", "ice", "fighting", "poison",
+      "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel", "fairy",
+    ].map((t) => ({ value: t })),
   },
   {
     id: "region",
-    title: "地區（可複選＝OR）",
     type: "multi-or",
     options: [
-      { value: "kanto", label: "關都 Kanto（第1代）" },
-      { value: "johto", label: "城都 Johto（第2代）" },
-      { value: "hoenn", label: "豐緣 Hoenn（第3代）" },
-      { value: "sinnoh", label: "神奧 Sinnoh（第4代）" },
-      { value: "unova", label: "合眾 Unova（第5代）" },
-      { value: "kalos", label: "卡洛斯 Kalos（第6代）" },
-      { value: "alola", label: "阿羅拉 Alola（第7代）" },
-      { value: "galar", label: "伽勒爾 Galar（第8代）" },
-      { value: "hisui", label: "洗翠 Hisui" },
-      { value: "paldea", label: "帕底亞 Paldea（第9代）" },
-    ],
+      "kanto", "johto", "hoenn", "sinnoh", "unova", "kalos", "alola", "galar", "hisui", "paldea",
+    ].map((r) => ({ value: r })),
   },
   {
     id: "buddy",
-    title: "夥伴等級（可複選＝OR）",
     type: "multi-or",
-    options: [
-      { value: "buddy0", label: "從未設為夥伴" },
-      { value: "buddy1", label: "曾設為夥伴（未達好夥伴）" },
-      { value: "buddy2", label: "好夥伴 Good Buddy" },
-      { value: "buddy3", label: "超級夥伴 Great Buddy" },
-      { value: "buddy4", label: "特極夥伴 Ultra Buddy" },
-      { value: "buddy5", label: "至極夥伴 Best Buddy" },
-    ],
+    options: [0, 1, 2, 3, 4, 5].map((n) => ({ value: `buddy${n}`, zh: `夥伴${n}` })),
   },
   {
     id: "special",
-    title: "稀有／特殊狀態",
     type: "toggle",
+    // zh 欄位皮已對照官方繁中文件逐一確認；fusion/favorite/hypertraining/background/
+    // locationbackground/altcolor 為官方文件有但工具原本沒有收錄的全新分類。
+    // altcolor（異色）目前只在繁中文件找到，英文版文件沒有對應段落，關鍵字暫時沿用中文拼音
+    // 佔位，若你的遊戲是英文介面，這個關鍵字可能無效，請自行實測。
     options: [
-      { value: "shiny", label: "閃光" },
-      { value: "legendary", label: "傳說" },
-      { value: "mythical", label: "夢幻／幻之" },
-      { value: "ultrabeast", label: "究極異獸" },
-      { value: "shadow", label: "暗影" },
-      { value: "purified", label: "淨化" },
-      { value: "lucky", label: "幸運" },
-      { value: "costume", label: "節慶造型" },
-      { value: "defender", label: "正在道館駐守" },
+      { value: "shiny", zh: "亮晶晶" }, // 修正：不是「閃光」
+      { value: "legendary", zh: "傳說" },
+      { value: "mythical", zh: "幻" }, // 修正：不是「夢夢∕幻之」，官方就是單字「幻」
+      { value: "ultrabeast", zh: "究極異獸" },
+      { value: "shadow", zh: "暗影" },
+      { value: "purified", zh: "淨化" },
+      { value: "lucky" }, // 官方繁中文件目前沒有列出對應中文關鍵字，暫時中英文皮用 lucky
+      { value: "costume", zh: "特殊" }, // 修正：官方語法是「特殊」（節慶造型只是我們對它的說明文字）
+      { value: "defender", zh: "防禦者" },
+      { value: "favorite", zh: "我的最愛" }, // 新增：官方文件「我的最愛」
+      { value: "fusion", zh: "合體" }, // 新增：合體寶可夢
+      { value: "hypertraining", zh: "極限特訓" }, // 新增：正在進行極限特訓
+      { value: "background", zh: "背卡" }, // 新增：擁有背卡
+      { value: "locationbackground", zh: "紀念背卡" }, // 新增：擁有標記捕捉地點的紀念背卡
+      { value: "altcolor", zh: "異色" }, // 新增：異色寲可夢（英文關鍵字未經官方文件證實）
     ],
   },
   {
     id: "source",
-    title: "取得來源",
     type: "toggle",
+    // raid/research/rocket/gbl/snapshot 這幾項目前找不到官方文件依據（只在社群 Wiki 出現過），
+    // 中文關鍵字未知，暫時維持中英文皮輸出同一個字串，請自行實測是否還有效。
     options: [
-      { value: "hatched", label: "蛋孵化" },
-      { value: "raid", label: "團體戰" },
-      { value: "research", label: "研究任務" },
-      { value: "rocket", label: "火箭隊" },
-      { value: "gbl", label: "對戰聯盟獎勵" },
-      { value: "traded", label: "交換取得" },
-      { value: "snapshot", label: "GO 隨拍偷拍" },
+      { value: "hatched", zh: "孵化" },
+      { value: "eggsonly", zh: "只限蛋" }, // 新增：僅限蛋出寲可夢（例如波克比），跟「孵化」不同
+      { value: "raid" },
+      { value: "research" },
+      { value: "rocket" },
+      { value: "gbl" },
+      { value: "traded", zh: "交換" },
+      { value: "snapshot" },
     ],
   },
   {
+    // 官方文件（中英文版）都沒有提到性別搜尋語法，這組關鍵字目前只有社群 Wiki 依據，
+    // 未經官方文件或本次比對驗證，中文關鍵字未知，暫時中英文皮用同一字串。
     id: "gender",
-    title: "性別",
     type: "toggle",
-    options: [
-      { value: "male", label: "雄性" },
-      { value: "female", label: "雌性" },
-      { value: "genderunknown", label: "無性別" },
-    ],
+    options: ["male", "female", "genderunknown"].map((v) => ({ value: v })),
   },
   {
     id: "size",
-    title: "體型",
     type: "toggle",
-    options: [
-      { value: "xxs", label: "超小型 XXS" },
-      { value: "xs", label: "小型 XS" },
-      { value: "xl", label: "大型 XL" },
-      { value: "xxl", label: "超大型 XXL" },
-    ],
+    options: ["xxs", "xs", "xl", "xxl"].map((v) => ({ value: v })),
   },
   {
     id: "evolution",
-    title: "進化／巨大化",
     type: "toggle",
     options: [
-      { value: "evolve", label: "目前可進化（糖果足夠）" },
-      { value: "evolvenew", label: "進化後會是新圖鑑" },
-      { value: "item", label: "需要進化道具" },
-      { value: "tradeevolve", label: "交換進化資格" },
-      { value: "megaevolve", label: "可Mega進化／原始回歸" },
-      { value: "dynamax", label: "可極巨化" },
-      { value: "gigantamax", label: "可超極巨化" },
+      { value: "evolve", zh: "進化" },
+      { value: "evolvenew", zh: "未登錄" }, // 修正：官方語法是「未登錄」（全新進化形）
+      { value: "evolvequest", zh: "任務進化" }, // 新增：透過任務進化，跟交換進化不同
+      { value: "item", zh: "道具" },
+      { value: "tradeevolve", zh: "交換進化" },
+      { value: "megaevolve", zh: "超級進化" },
+      { value: "dynamax", zh: "極巨化" },
+      { value: "gigantamax", zh: "超極巨化" },
     ],
   },
   {
     id: "custom",
-    title: "自訂搜尋詞（進階，直接用 &串接）",
     type: "text",
-    placeholder: "例如：@crunch 或 tradeevolve 等任何官方語法",
-    help: "這裡打的內容會原封不動用 & 接到整串查詢後面，適合進階玩家自行輸入招式(@)、標籤等語法。",
   },
 ];
 
-function tierOptions(_suffixUnused) {
-  return [
-    { value: "0", label: "0（IV = 0）" },
-    { value: "1", label: "1（IV 1–5）" },
-    { value: "2", label: "2（IV 6–10）" },
-    { value: "3", label: "3（IV 11–14）" },
-    { value: "4", label: "4（IV = 15，完美）" },
-  ];
-}
-
-function typeLabel(t) {
-  const zh = {
-    normal: "一般", fire: "火", water: "水", grass: "草", electric: "電",
-    ice: "冰", fighting: "格鬥", poison: "毒", ground: "地面", flying: "飛行",
-    psychic: "超能力", bug: "蟲", rock: "岩石", ghost: "幽靈", dragon: "龍",
-    dark: "惡", steel: "鋼", fairy: "妖精",
-  };
-  return `${zh[t] || t}（${t}）`;
+// 官方語法是「數字在前、關鍵字在後」，例如 0attack、1defense、2hp（不是 attack0）。
+// zhSuffix 是中文版遊戲會用到的翻譯後字尾（若尚未確認就傳跟 enSuffix 一樣的字）。
+function tierOptions(enSuffix, zhSuffix) {
+  return [0, 1, 2, 3, 4].map((n) => ({ value: `${n}${enSuffix}`, zh: `${n}${zhSuffix}` }));
 }
