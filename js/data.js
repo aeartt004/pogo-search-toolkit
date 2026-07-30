@@ -107,19 +107,24 @@ const FILTER_GROUPS = [
     max: 3,
   },
   {
+    // 官方繁中文件確認：屬性搜尋要輸入中文屬性名稱（例如「草」），不是英文（grass）。
     id: "type",
     type: "multi-or",
     options: [
-      "normal", "fire", "water", "grass", "electric", "ice", "fighting", "poison",
-      "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel", "fairy",
-    ].map((t) => ({ value: t })),
+      ["normal", "一般"], ["fire", "火"], ["water", "水"], ["grass", "草"], ["electric", "電"],
+      ["ice", "冰"], ["fighting", "格鬥"], ["poison", "毒"], ["ground", "地面"], ["flying", "飛行"],
+      ["psychic", "超能力"], ["bug", "蟲"], ["rock", "岩石"], ["ghost", "幽靈"], ["dragon", "龍"],
+      ["dark", "惡"], ["steel", "鋼"], ["fairy", "妖精"],
+    ].map(([value, zh]) => ({ value, zh })),
   },
   {
+    // 官方繁中文件確認：地區搜尋要輸入中文地區名稱（例如「阿羅拉」），不是英文（alola）。
     id: "region",
     type: "multi-or",
     options: [
-      "kanto", "johto", "hoenn", "sinnoh", "unova", "kalos", "alola", "galar", "hisui", "paldea",
-    ].map((r) => ({ value: r })),
+      ["kanto", "關都"], ["johto", "城都"], ["hoenn", "豐緣"], ["sinnoh", "神奧"], ["unova", "合眾"],
+      ["kalos", "卡洛斯"], ["alola", "阿羅拉"], ["galar", "伽勒爾"], ["hisui", "洗翠"], ["paldea", "帕底亞"],
+    ].map(([value, zh]) => ({ value, zh })),
   },
   {
     id: "buddy",
