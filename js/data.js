@@ -140,7 +140,7 @@ const FILTER_GROUPS = [
     // 佔位，若你的遊戲是英文介面，這個關鍵字可能無效，請自行實測。
     options: [
       { value: "shiny", zh: "亮晶晶" }, // 修正：不是「閃光」
-      { value: "legendary", zh: "傳說" },
+      { value: "legendary", zh: "傳說的寶可夢" }, // 修正：使用者實測確認要用完整詞「傳說的寶可夢」，不是「傳說」
       { value: "mythical", zh: "幻" }, // 修正：不是「夢幻／幻之」，官方就是單字「幻」
       { value: "ultrabeast", zh: "究極異獸" },
       { value: "shadow", zh: "暗影" },
@@ -159,25 +159,29 @@ const FILTER_GROUPS = [
   {
     id: "source",
     type: "toggle",
-    // research/rocket/gbl/snapshot 這幾項官方文件找不到依據，中文關鍵字未知，
-    // 暫時維持中英文皆輸出同一個字串，請自行實測是否還有效（跟 raid 一樣可能有中文版專用關鍵字）。
+    // research/rocket/gbl 已依巴哈姆特精華文（2022）交叉比對確認；snapshot 該文件顯示
+    // 中文版介面同樣直接輸出英文「Snapshot」，故維持中英文同一字串不用改。
     options: [
       { value: "hatched", zh: "孵化" },
       { value: "eggsonly", zh: "只限蛋" }, // 新增：僅限蛋出寶可夢（例如波克比），跟「孵化」不同
       { value: "raid", zh: "團體戰" }, // 修正：使用者實測確認中文版要用「團體戰」而非「raid」
-      { value: "research" },
-      { value: "rocket" },
-      { value: "gbl" },
+      { value: "research", zh: "調查" }, // 修正：巴哈精華文確認為「調查」（田野調查獎勵）
+      { value: "rocket", zh: "火箭" }, // 修正：巴哈精華文確認為「火箭」，不是「火箭隊」
+      { value: "gbl", zh: "GO對戰聯盟" }, // 修正：巴哈精華文確認為「GO對戰聯盟」
       { value: "traded", zh: "交換" },
-      { value: "snapshot" },
+      { value: "snapshot" }, // 巴哈精華文確認中文版介面同樣打英文「Snapshot」，不用翻譯
     ],
   },
   {
     // 官方文件（中英文版）都沒有提到性別搜尋語法，這組關鍵字目前只有社群 Wiki 依據，
-    // 未經官方文件或本次比對驗證，中文關鍵字未知，暫時中英文皆用同一字串。
+    // zh 欄位已依巴哈精華文確認為「雄性/雌性/性別不明」。
     id: "gender",
     type: "toggle",
-    options: ["male", "female", "genderunknown"].map((v) => ({ value: v })),
+    options: [
+      { value: "male", zh: "雄性" },
+      { value: "female", zh: "雌性" },
+      { value: "genderunknown", zh: "性別不明" },
+    ],
   },
   {
     id: "size",
