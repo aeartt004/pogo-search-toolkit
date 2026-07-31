@@ -159,12 +159,12 @@ const FILTER_GROUPS = [
   {
     id: "source",
     type: "toggle",
-    // raid/research/rocket/gbl/snapshot 這幾項目前找不到官方文件依據（只在社群 Wiki 出現過），
-    // 中文關鍵字未知，暫時維持中英文皆輸出同一個字串，請自行實測是否還有效。
+    // research/rocket/gbl/snapshot 這幾項官方文件找不到依據，中文關鍵字未知，
+    // 暫時維持中英文皆輸出同一個字串，請自行實測是否還有效（跟 raid 一樣可能有中文版專用關鍵字）。
     options: [
       { value: "hatched", zh: "孵化" },
       { value: "eggsonly", zh: "只限蛋" }, // 新增：僅限蛋出寶可夢（例如波克比），跟「孵化」不同
-      { value: "raid" },
+      { value: "raid", zh: "團體戰" }, // 修正：使用者實測確認中文版要用「團體戰」而非「raid」
       { value: "research" },
       { value: "rocket" },
       { value: "gbl" },
