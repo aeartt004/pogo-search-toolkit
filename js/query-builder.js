@@ -60,10 +60,19 @@ function buildQueries(selections, gameLang = "zh") {
       const term = buildRangeTerm(prefixFor(group, gameLang), state.min, state.max);
       if (term) andTerms.push(term);
     } else if (group.type === "toggle") {
+      // 「排除」彼此之間邏輯上就是 AND（非A且非B沒有歧義），直接疊加。
+      // 「需要」如果同時勾了 2 個以上（例如雄性+雌性），代表這些選項是互斥的 OR 關係
+      // （例如「雄性或雌性」），跟 multi-or 分類一樣要另外組成 OR 群組，不能直接用 & 串起來。
+      const included = [];
       for (const opt of group.options) {
         const s = state[opt.value]; // "include" | "exclude" | undefined
-        if (s === "include") andTerms.push(termFor(opt, gameLang));
+        if (s === "include") included.push(termFor(opt, gameLang));
         else if (s === "exclude") andTerms.push(`!${termFor(opt, gameLang)}`);
+      }
+      if (included.length === 1) {
+        andTerms.push(included[0]);
+      } else if (included.length > 1) {
+        orGroups.push({ groupId: group.id, terms: included });
       }
     } else if (group.type === "multi-or") {
       const selected = group.options
