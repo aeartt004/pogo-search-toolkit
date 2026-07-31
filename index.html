@@ -5,12 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pokémon GO 搜尋條件產生器</title>
 <link rel="stylesheet" href="css/style.css" />
+<!-- Google AdSense 廣告（尚未啟用，僅預留版位）啟用步驟：
+     1) 到 https://www.google.com/adsense 申請帳號，通過審核後取得發布商 ID（格式如 ca-pub-1234567890123456）
+     2) 移除下面整段外層的註解符號，並把 ca-pub-XXXXXXXXXXXXXXXX 換成你的發布商 ID
+     3) 到 AdSense 後台為「上段/中段/下段」各建立一個廣告單元，記下各自的 data-ad-slot 編號
+     4) 到下方三個 .ad-slot 區塊，把裡面對應的 ins 廣告程式碼一併取消註解，並填入正確的 client / slot 編號 -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
 </head>
 <body>
   <header class="app-header">
     <h1 id="header-title">Pokémon GO 搜尋條件產生器</h1>
     <p class="subtitle" id="header-subtitle">勾選你要的條件，自動組出遊戲搜尋欄可以用的語法字串</p>
   </header>
+
+  <!-- 上段廣告版位 -->
+  <div class="ad-slot" id="ad-slot-top" aria-hidden="true">
+    <span class="ad-slot-label">廣告</span>
+    <!--
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="0000000000"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    -->
+  </div>
 
   <main class="app-main">
     <section class="panel results-panel">
@@ -63,8 +83,36 @@
       <p class="help-text" id="presets-help"></p>
     </section>
 
+    <!-- 中段廣告版位 -->
+    <div class="ad-slot" id="ad-slot-mid" aria-hidden="true">
+      <span class="ad-slot-label">廣告</span>
+      <!--
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="0000000000"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      -->
+    </div>
+
     <form id="filter-form" class="panel form-panel"></form>
   </main>
+
+  <!-- 下段廣告版位 -->
+  <div class="ad-slot" id="ad-slot-bottom" aria-hidden="true">
+    <span class="ad-slot-label">廣告</span>
+    <!--
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="0000000000"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    -->
+  </div>
 
   <footer class="app-footer">
     <p id="footer-text"></p>
